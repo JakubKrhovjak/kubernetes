@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-rest
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      run: simple-rest
+  template:
+    metadata:
+      labels:
+        run: simple-rest
+    spec:
+      containers:
+        - image: japca/simple-rest:latest
+          imagePullPolicy: IfNotPresent
+          name: simple-rest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-rest
+  namespace: default
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    run: simple-rest
+  type: NodePort
