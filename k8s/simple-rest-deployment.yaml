@@ -13,12 +13,25 @@ spec:
         run: simple-rest
     spec:
       containers:
-        - image: japca/simple-rest:latest
+        - image: japca/simple-rest:1.1.2
           imagePullPolicy: IfNotPresent
           name: simple-rest
           ports:
             - containerPort: 8080
               protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+
 ---
 
 apiVersion: v1
