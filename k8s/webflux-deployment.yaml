@@ -13,12 +13,24 @@ spec:
         run: webflux
     spec:
       containers:
-        - image: japca/webflux:latest
+        - image: japca/webflux:1.1.0
           imagePullPolicy: IfNotPresent
           name: webflux
           ports:
             - containerPort: 8080
               protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
 ---
 
 apiVersion: v1
