@@ -1,7 +1,3 @@
-spring:
-  lifecycle:
-    timeout-per-shutdown-phase: 1m
-
 server:
   shutdown: graceful
 
@@ -16,4 +12,15 @@ management:
       probes:
         enabled: true
 
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 1m
+
+
+
+
+
+
+#
+#message: "test message"
 

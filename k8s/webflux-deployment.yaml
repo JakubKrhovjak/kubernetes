@@ -38,6 +38,8 @@ kind: Service
 metadata:
   name: webflux
   namespace: default
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"8080":{}}}'
 spec:
   ports:
     - port: 8080
@@ -45,4 +47,4 @@ spec:
       targetPort: 8080
   selector:
     run: webflux
-  type: NodePort
+  type: LoadBalancer

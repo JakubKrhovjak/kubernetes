@@ -13,7 +13,7 @@ spec:
         run: simple-rest
     spec:
       containers:
-        - image: japca/simple-rest:1.1.3
+        - image: japca/simple-rest:1.2.1
           imagePullPolicy: IfNotPresent
           name: simple-rest
           ports:
@@ -31,6 +31,26 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: 8080
+          envFrom:
+            - configMapRef:
+                name: simple-rest-config
+#          env:
+#            - name: SPRING_APPLICATION_JSON
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: simple-rest-map
+#                  key: application.json
+          volumeMounts:
+            - name: application-yml
+              mountPath: "/config"
+#              subPath: application.yml
+              readOnly: true
+      volumes:
+        - name: application-yml
+          configMap:
+            name: simple-rest-config
+
+
 
 ---
 
@@ -39,6 +59,9 @@ kind: Service
 metadata:
   name: simple-rest
   namespace: default
+  annotations:
+#     cloud.google.com/neg: '{"exposed_ports": {"8080":{}}}'
+    cloud.google.com/l4-rbs: "enabled"
 spec:
   ports:
     - port: 8080
@@ -46,4 +69,5 @@ spec:
       targetPort: 8080
   selector:
     run: simple-rest
-  type: NodePort
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
