@@ -1,0 +1,17 @@
+server:
+  port: 8090
+
+
+
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: simple-rest
+#          uri: http://localhost:8080/
+#          predicates:
+#            - Path=/simple-rest/**
+#        - id: appb
+#          uri: http://localhost:8082/
+#          predicates:
+#            - Path=/appb/**

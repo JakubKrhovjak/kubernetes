@@ -13,18 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController
 @SpringBootApplication
 @RequiredArgsConstructor
 public class SimpleRest {
 
     public static void main(String[] args) {
         SpringApplication.run(SimpleRest.class, args);
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        return "simple-rest app";
     }
 
     @Value("${message:nula}")
