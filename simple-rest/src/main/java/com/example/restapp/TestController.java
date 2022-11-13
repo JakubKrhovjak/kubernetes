@@ -18,5 +18,10 @@ public class TestController {
         return "simple-rest app";
     }
 
+    @GetMapping("/token")
+    public String token() {
+        return "simple-rest app";
+    }
+
 
 }

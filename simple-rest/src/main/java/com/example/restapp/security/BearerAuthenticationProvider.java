@@ -1,0 +1,32 @@
+package com.example.restapp.security;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Created by Jakub Krhovják on 11/5/22.
+ */
+
+@RequiredArgsConstructor
+public class BearerAuthenticationProvider implements AuthenticationProvider {
+    private final String bearerToken;
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+      if(bearerToken.equals(authentication.getCredentials())) {
+          return new BearerAuthentication(true, null);
+      }
+      return authentication;
+
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return BearerAuthentication.class.equals(authentication);
+    }
+}

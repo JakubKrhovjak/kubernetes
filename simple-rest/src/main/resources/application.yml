@@ -1,4 +1,9 @@
 spring:
+#  security:
+#    user:
+#      name: jakub
+#      password: 123
+
   lifecycle:
     timeout-per-shutdown-phase: 1m
 
@@ -15,5 +20,8 @@ management:
       show-details: never
       probes:
         enabled: true
+
+bearer-token: b-token
+
 
 
