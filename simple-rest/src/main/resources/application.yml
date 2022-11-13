@@ -22,6 +22,7 @@ management:
         enabled: true
 
 bearer-token: b-token
+api-token: api-token
 
 
 

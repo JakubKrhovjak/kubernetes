@@ -8,14 +8,14 @@ import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Created by Jakub Krhovják on 11/5/22.
+ * Created by Jakub Krhovják on 11/13/22.
  */
-
 @RequiredArgsConstructor
-public class BearerAuthentication implements Authentication {
-
+public class ApiTokenAuthentication  implements Authentication {
     private final boolean authenticated;
-    private final String bearerToken;
+
+    private final String apiToken;
+
 
     @Override
     public boolean isAuthenticated() {
@@ -23,13 +23,9 @@ public class BearerAuthentication implements Authentication {
     }
     @Override
     public Object getCredentials() {
-        return bearerToken;
+        return apiToken;
     }
 
-
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -48,10 +44,13 @@ public class BearerAuthentication implements Authentication {
         return null;
     }
 
+    @Override
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 
+    }
 
     @Override
     public String getName() {
-        return "Authorization";
+        return "api-key";
     }
 }

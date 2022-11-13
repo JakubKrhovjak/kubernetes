@@ -36,10 +36,14 @@ public class SecurityConfig extends SecurityConfigurerAdapter {
     @Value("${bearer-token}")
     private String bearerToken;
 
+    @Value("${api-token}")
+    private String apiToken;
+
     @Bean
     public AuthenticationManager customAuthManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(new BearerAuthenticationProvider(bearerToken))
+                .authenticationProvider(new ApiTokenAuthenticationProvider(apiToken))
                 .build();
     }
 
