@@ -1,6 +1,7 @@
 package com.example.restapp.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,14 +37,14 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ProviderManager authenticationManager1 = (ProviderManager) authenticationManager;
-        List<AuthenticationProvider> providers = authenticationManager1.getProviders();
         var bearer = request.getHeader("authorization");
         var authentication = authenticationManager.authenticate(new BearerAuthentication(false, bearer));
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } else {
-            throw new AuthenticationException("");
+            response.setHeader("WWW-Authenticate","token-Security");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
 
 

@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
 
 import java.util.List;
@@ -45,23 +46,20 @@ public class SecurityConfig extends SecurityConfigurerAdapter {
     @Bean
     @Order(1)
     public SecurityFilterChain tokenFilterChain(HttpSecurity http) throws Exception {
-//        http.getSharedObject(AuthenticationManagerBuilder.class)
-//                .authenticationProvider(bearerAuthenticationProvider())
-//                .build();
-
         return http
                 .mvcMatcher("/simple-rest/token/**")
-                .addFilterAfter(new TokenFilter(customAuthManager(http)), X509AuthenticationFilter.class)
+                .addFilterAt(new TokenFilter(customAuthManager(http)), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests().mvcMatchers("/simple-rest/token/**").authenticated()
                 .and()
-//                .authenticationProvider(new BearerAuthenticationProvider())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .build();
     }
 
+
+
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception {
         return http
                 .mvcMatcher("/simple-rest/test/**")
