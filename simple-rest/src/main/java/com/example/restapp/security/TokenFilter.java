@@ -28,14 +28,14 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authType = request.getAuthType();
-        Authentication dd = authenticationManager.authenticate(new BearerAuthentication(false, "b-token"));
-        if (dd.isAuthenticated()) {
-//        authenticationManager.authenticate(new BearerAuthentication(request.ge))
+        var bearer = request.getHeader("authorization");
+        var authentication = authenticationManager.authenticate(new BearerAuthentication(false, bearer));
+        if (authentication.isAuthenticated()) {
             filterChain.doFilter(request, response);
         } else {
             throw new BadCredentialsException("");
         }
+
 
     }
 }

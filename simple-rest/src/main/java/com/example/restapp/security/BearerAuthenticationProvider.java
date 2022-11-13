@@ -18,7 +18,8 @@ public class BearerAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-      if(bearerToken.equals(authentication.getCredentials())) {
+
+      if(bearerToken.equals(parseToken(authentication.getCredentials().toString()))) {
           return new BearerAuthentication(true, null);
       }
       return authentication;
@@ -28,5 +29,9 @@ public class BearerAuthenticationProvider implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
         return BearerAuthentication.class.equals(authentication);
+    }
+
+    private static String parseToken(String bearerToken) {
+        return bearerToken.replace("Bearer", "").trim();
     }
 }

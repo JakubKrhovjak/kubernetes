@@ -49,23 +49,23 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain tokenFilterChain(HttpSecurity http) throws Exception {
         return http
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterAt(tokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests().mvcMatchers("/simple-rest/token/**").authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .build();
     }
 
     @Bean
-    @Order(2)
+    @Order(1)
     public SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception {
         return http.httpBasic()
                 .and()
-                .authorizeHttpRequests().mvcMatchers("/simple-rest/test/**").authenticated()
+                .authorizeHttpRequests().mvcMatchers("/simple-rest/test/**").hasAuthority("test")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -79,7 +79,7 @@ public class SecurityConfig {
         var im = new InMemoryUserDetailsManager();
         var user = User.withUsername("jakub")
                 .password(passwordEncoder().encode("123"))
-                .authorities("read")
+                .authorities("test")
                 .build();
         im.createUser(user);
 
