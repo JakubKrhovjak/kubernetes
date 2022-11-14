@@ -43,14 +43,17 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var authentication = authenticationManager.authenticate(authorization(request));
-        if (authentication.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            filterChain.doFilter(request, response);
-        } else {
+        try {
+            var authentication = authenticationManager.authenticate(authorization(request));
+            if (authentication.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                filterChain.doFilter(request, response);
+            }
+        } catch (Exception e) {
             response.setHeader("WWW-Authenticate", "token-Security");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
+
     }
 
     private Authentication authorization(HttpServletRequest request) {

@@ -1,6 +1,7 @@
 package com.example.restapp.security;
 
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
@@ -20,7 +21,8 @@ public class ApiTokenAuthenticationProvider implements AuthenticationProvider {
         if(apiToken.equals(authentication.getCredentials().toString())) {
             return new BearerAuthentication(true, null);
         }
-        return authentication;
+
+        throw new BadCredentialsException("");
     }
 
     @Override

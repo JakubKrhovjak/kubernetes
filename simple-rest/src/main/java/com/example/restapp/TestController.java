@@ -14,13 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/basic")
-    public String test() {
+    public String basic() {
         return "simple-rest app basic";
     }
 
     @GetMapping("/token")
     public String token() {
         return "simple-rest app token";
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "simple-rest app test";
     }
 
 

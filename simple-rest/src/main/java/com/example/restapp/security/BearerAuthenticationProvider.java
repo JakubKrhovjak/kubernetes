@@ -2,6 +2,7 @@ package com.example.restapp.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -25,8 +26,8 @@ public class BearerAuthenticationProvider implements AuthenticationProvider {
       if(bearerToken.equals(parseToken(authentication.getCredentials().toString()))) {
           return new BearerAuthentication(true, null);
       }
-      return authentication;
 
+      throw new BadCredentialsException("");
     }
 
     @Override

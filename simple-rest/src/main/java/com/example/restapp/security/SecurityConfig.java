@@ -31,7 +31,7 @@ import java.util.List;
  * Created by Jakub Krhovják on 11/5/22.
  */
 @Configuration
-public class SecurityConfig extends SecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Value("${bearer-token}")
     private String bearerToken;
@@ -60,21 +60,20 @@ public class SecurityConfig extends SecurityConfigurerAdapter {
                 .build();
     }
 
-
-
     @Bean
-    @Order(3)
+    @Order(2)
     public SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception {
         return http
-                .mvcMatcher("/simple-rest/test/**")
+                .mvcMatcher("/simple-rest/basic/**")
                 .httpBasic()
                 .and()
-                .authorizeHttpRequests().mvcMatchers("/simple-rest/test/**").hasAuthority("test")
+                .authorizeHttpRequests().mvcMatchers("/simple-rest/basic/**").hasAuthority("test")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {
