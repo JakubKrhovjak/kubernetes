@@ -14,8 +14,18 @@ management:
         enabled: true
 
 spring:
+  security:
+    user:
+      name: jakub
+      password: 123
+      roles: test
+
   lifecycle:
     timeout-per-shutdown-phase: 1m
+
+bearer-token: b-token
+api-token: api-token
+
 
 
 

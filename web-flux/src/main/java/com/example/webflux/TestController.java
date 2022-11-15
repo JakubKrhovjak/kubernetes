@@ -10,12 +10,22 @@ import reactor.core.publisher.Mono;
  * Created by Jakub Krhovják on 10/29/22.
  */
 @RestController
-@RequestMapping("webflux")
+@RequestMapping("/webflux")
 public class TestController {
 
     @GetMapping("/test")
     public Mono<String> test() {
-        return Mono.just("web-flux app");
+        return Mono.just("web-flux app test");
+    }
+
+    @GetMapping("/basic")
+    public Mono<String> basic() {
+        return Mono.just("web-flux basic");
+    }
+
+    @GetMapping("/token")
+    public Mono<String> basic() {
+        return Mono.just("web-flux basic");
     }
 
 }
