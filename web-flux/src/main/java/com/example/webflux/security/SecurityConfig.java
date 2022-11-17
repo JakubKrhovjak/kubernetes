@@ -5,17 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
-
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 /**
  * Created by Jakub Krhovják on 11/5/22.
@@ -23,31 +20,54 @@ import java.util.List;
 @Configuration
 public class SecurityConfig  {
 
+    private static final String AUTHORIZATION = "Authorization";
+
+    private static final String API_KEY = "api-key";
+
     @Value("${bearer-token}")
     private String bearerToken;
 
-//    @Value("${api-token}")
-//    private String apiToken;
+    @Value("${api-token}")
+    private String apiToken;
 
 
-//    @Bean
-//    public ReactiveAuthenticationManager customAuthManager(ServerHttpSecurity http) throws Exception {
-//        var authManager = new ProviderManager(List.of(new BearerAuthenticationProvider(bearerToken)));
-//        return new ReactiveAuthenticationManagerAdapter(authManager);
-//    }
+    public ReactiveAuthenticationManager emptyReactiveAuthenticationManager() {
+        return Mono::justOrEmpty;
+    }
 
+    public AuthenticationWebFilter bearerFilter() {
+        var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
+        filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
+                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(AUTHORIZATION))
+                .filter(value -> bearerToken.equals(parseToken(value)))
+                .map(value -> new TokenAuthentication(true, value)));
+
+        return filter;
+    }
+
+    public AuthenticationWebFilter apiToken() {
+        var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
+        filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
+                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(API_KEY))
+                .filter(value -> apiToken.equals(value))
+                .map(value -> new TokenAuthentication(true, value)));
+
+        return filter;
+    }
+
+    private static String parseToken(String bearerToken) {
+        return bearerToken.replace("Bearer", "").trim();
+    }
 
     @Bean
     @Order(1)
     public SecurityWebFilterChain tokenFilterChain(ServerHttpSecurity http) throws Exception {
-        var authManager = new ProviderManager(List.of(new BearerAuthenticationProvider(bearerToken)));
-
         return http
                 .securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webflux/token/**"))
-                .addFilterAt(new TokenFilter(new ReactiveAuthenticationManagerAdapter(authManager)), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(bearerFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(apiToken(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange().pathMatchers("/webflux/token/**").authenticated()
                 .and()
-
                 .build();
     }
 
