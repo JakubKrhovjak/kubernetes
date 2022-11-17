@@ -34,19 +34,20 @@ public class TokenFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-     return authenticationManager.authenticate(authorization(exchange.getRequest()))
-                .doOnNext(authentication -> {
-                    ReactiveSecurityContextHolder.getContext()
-                            .subscriberContext((ReactiveSecurityContextHolder.withAuthentication(authentication)));
-                    chain.filter(exchange);
-                    return Mono.empty();
-                })
-             .onErrorMap(e -> {
-                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                 exchange.getResponse().getHeaders().set(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
-                 return Mono.empty();
-             });
+//     return authenticationManager.authenticate(authorization(exchange.getRequest()))
+//                .doOnNext(authentication -> {
+//                    ReactiveSecurityContextHolder.getContext()
+//                            .subscriberContext((ReactiveSecurityContextHolder.withAuthentication(authentication)));
+//                    chain.filter(exchange);
+//                    return Mono.empty();
+//                })
+//             .onErrorMap(e -> {
+//                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+//                 exchange.getResponse().getHeaders().set(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
+//                 return Mono.empty();
+//             });
 
+       return Mono.empty();
     }
 
     private static Authentication authorization(ServerHttpRequest request) {
