@@ -24,8 +24,8 @@ public class TestController {
     }
 
     @GetMapping("/token")
-    public Mono<String> basic() {
-        return Mono.just("web-flux basic");
+    public Mono<String> token() {
+        return Mono.just("web-flux token");
     }
 
 }
