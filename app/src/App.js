@@ -1,10 +1,10 @@
 import {useEffect} from "react";
-import axios from "axios";
+import { axios } from "./config/axiosCofnig";
 
 function App() {
 
     useEffect(() => {
-        axios.get("http://localhost:8080/simple-rest/test")
+        axios.get("simple-rest/test")
             .then(res => console.log(res));
 
     })
