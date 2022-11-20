@@ -9,6 +9,7 @@ spring:
 
 server:
   shutdown: graceful
+  port: 8081
 
 management:
   endpoints:
