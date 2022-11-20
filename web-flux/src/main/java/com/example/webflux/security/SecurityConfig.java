@@ -1,33 +1,18 @@
 package com.example.webflux.security;
 
-import com.fasterxml.jackson.core.filter.TokenFilter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DelegatingReactiveAuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Created by Jakub Krhovják on 11/5/22.
@@ -35,32 +20,54 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 @Configuration
 public class SecurityConfig  {
 
+    private static final String AUTHORIZATION = "Authorization";
+
+    private static final String API_KEY = "api-key";
+
     @Value("${bearer-token}")
     private String bearerToken;
 
-//    @Value("${api-token}")
-//    private String apiToken;
+    @Value("${api-token}")
+    private String apiToken;
 
 
-    public ReactiveAuthenticationManagerAdapter customAuthManager(HttpSecurity http) throws Exception {
-        var authManager = http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(new BearerAuthenticationProvider(bearerToken))
-//                .authenticationProvider(new ApiTokenAuthenticationProvider(apiToken))
-                .build();
-
-        return new ReactiveAuthenticationManagerAdapter(authManager);
+    public ReactiveAuthenticationManager emptyReactiveAuthenticationManager() {
+        return Mono::justOrEmpty;
     }
 
+    public AuthenticationWebFilter bearerFilter() {
+        var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
+        filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
+                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(AUTHORIZATION))
+                .filter(value -> bearerToken.equals(parseToken(value)))
+                .map(value -> new TokenAuthentication(true, value)));
+
+        return filter;
+    }
+
+    public AuthenticationWebFilter apiToken() {
+        var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
+        filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
+                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(API_KEY))
+                .filter(value -> apiToken.equals(value))
+                .map(value -> new TokenAuthentication(true, value)));
+
+        return filter;
+    }
+
+    private static String parseToken(String bearerToken) {
+        return bearerToken.replace("Bearer", "").trim();
+    }
 
     @Bean
-    @Order(2)
+    @Order(1)
     public SecurityWebFilterChain tokenFilterChain(ServerHttpSecurity http) throws Exception {
         return http
                 .securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webflux/token/**"))
-//                .addFilterAt(new TokenFilter(customAuthManager(http)), AuthenticationWebFilter.class)
+                .addFilterAt(bearerFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(apiToken(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange().pathMatchers("/webflux/token/**").authenticated()
                 .and()
-
                 .build();
     }
 

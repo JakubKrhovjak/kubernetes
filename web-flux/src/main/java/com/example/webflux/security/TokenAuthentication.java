@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
  */
 
 @RequiredArgsConstructor
-public class BearerAuthentication implements Authentication {
+public class TokenAuthentication implements Authentication {
 
     private final boolean authenticated;
     private final String bearerToken;
