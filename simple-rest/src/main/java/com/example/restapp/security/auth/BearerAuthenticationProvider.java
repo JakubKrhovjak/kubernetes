@@ -1,12 +1,9 @@
-package com.example.restapp.security;
+package com.example.restapp.security.auth;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 

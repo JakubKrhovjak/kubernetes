@@ -1,4 +1,7 @@
-package com.example.restapp.security;
+package com.example.restapp.security.auth;
+
+import com.example.restapp.security.JwtService;
+import com.example.restapp.user.UserRepository;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,11 +17,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApiTokenAuthenticationProvider implements AuthenticationProvider {
 
-    private final String apiToken;
+    private final JwtService jwtService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if(apiToken.equals(authentication.getCredentials().toString())) {
+        var jwtToken = authentication.getCredentials().toString();
+        if(jwtService.validateToken(jwtToken)) {
             return new BearerAuthentication(true, null);
         }
 

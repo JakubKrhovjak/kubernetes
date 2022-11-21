@@ -1,18 +1,15 @@
 package com.example.restapp.security;
 
+import com.example.restapp.security.auth.ApiTokenAuthenticationProvider;
+import com.example.restapp.security.auth.BearerAuthenticationProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
@@ -20,14 +17,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-
-import java.util.List;
 
 /**
  * Created by Jakub Krhovják on 11/5/22.
@@ -41,11 +32,14 @@ public class SecurityConfig {
     @Value("${api-token}")
     private String apiToken;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Bean
     public AuthenticationManager customAuthManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(new BearerAuthenticationProvider(bearerToken))
-                .authenticationProvider(new ApiTokenAuthenticationProvider(apiToken))
+                .authenticationProvider(new ApiTokenAuthenticationProvider(jwtService))
                 .build();
     }
 

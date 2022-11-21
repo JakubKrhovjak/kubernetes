@@ -1,4 +1,4 @@
-package com.example.restapp.security;
+package com.example.restapp.security.auth;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

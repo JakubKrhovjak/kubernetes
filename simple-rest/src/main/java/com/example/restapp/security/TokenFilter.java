@@ -1,27 +1,17 @@
 package com.example.restapp.security;
 
-import org.apache.tomcat.util.http.MimeHeaders;
-import org.apache.tomcat.util.http.parser.Authorization;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.restapp.security.auth.ApiTokenAuthentication;
+import com.example.restapp.security.auth.BearerAuthentication;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.stream.Stream;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
