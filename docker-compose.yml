@@ -1,0 +1,17 @@
+version: '2'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_USERNAME=jakub
+      - POSTGRESQL_DATABASE=data_db
+      - POSTGRESQL_PASSWORD=pass
+  myapp:
+    image: bitnami/postgresql

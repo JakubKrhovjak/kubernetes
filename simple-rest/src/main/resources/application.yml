@@ -1,8 +1,22 @@
 spring:
-#  security:
-#    user:
-#      name: jakub
-#      password: 123
+  security:
+    user:
+      name: jakub
+      password: 123
+
+  jpa:
+
+
+  datasource:
+    hikari:
+#      username: jakub
+#      password: pass
+      jdbc-url: jdbc:postgresql://localhost:5432/data_db?user=jakub&password=pass
+    driver-class-name: org.hibernate.dialect.PostgreSQL10Dialect
+
+
+
+
 
   lifecycle:
     timeout-per-shutdown-phase: 1m
