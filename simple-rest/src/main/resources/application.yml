@@ -4,8 +4,6 @@ spring:
       name: jakub
       password: 123
 
-  jpa:
-
 
   datasource:
     hikari:
