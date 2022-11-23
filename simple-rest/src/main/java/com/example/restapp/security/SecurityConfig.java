@@ -2,6 +2,8 @@ package com.example.restapp.security;
 
 import com.example.restapp.security.auth.ApiTokenAuthenticationProvider;
 import com.example.restapp.security.auth.BearerAuthenticationProvider;
+import com.example.restapp.security.auth.JwtAuthenticationProvider;
+import com.example.restapp.security.auth.JwtTokenAuthentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +41,8 @@ public class SecurityConfig {
     public AuthenticationManager customAuthManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(new BearerAuthenticationProvider(bearerToken))
-                .authenticationProvider(new ApiTokenAuthenticationProvider(jwtService))
+                .authenticationProvider(new ApiTokenAuthenticationProvider(apiToken))
+                .authenticationProvider(new JwtAuthenticationProvider(jwtService))
                 .build();
     }
 
@@ -69,6 +72,19 @@ public class SecurityConfig {
                 .and()
                 .build();
     }
+
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .mvcMatcher("/simple-rest/jwt/**")
+//                .addFilterAt(new TokenFilter(customAuthManager(http)), UsernamePasswordAuthenticationFilter.class)
+//                .authorizeHttpRequests().mvcMatchers("/simple-rest/jwt/**").authenticated()
+//                .and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .build();
+//    }
 
 
     @Bean

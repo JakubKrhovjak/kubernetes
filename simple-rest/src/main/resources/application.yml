@@ -31,6 +31,7 @@ management:
         enabled: true
 
 bearer-token: b-token
+api-token: api-token
 
 jwt:
   secret: d39f61435f803dc554b3f61620684c5141d354fbe3072ad69a85858a8b60daec

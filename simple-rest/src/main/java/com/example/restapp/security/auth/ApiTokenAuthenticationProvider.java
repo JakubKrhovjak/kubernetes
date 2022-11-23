@@ -17,13 +17,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApiTokenAuthenticationProvider implements AuthenticationProvider {
 
-    private final JwtService jwtService;
+    private final String apiToken;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         var jwtToken = authentication.getCredentials().toString();
-        if(jwtService.validateToken(jwtToken)) {
-            return new BearerAuthentication(true, null);
+        if(apiToken.equals(authentication.getCredentials())) {
+            return new ApiTokenAuthentication(true, null);
         }
 
         throw new BadCredentialsException("");

@@ -30,5 +30,11 @@ public class TestController {
         return "simple-rest app test";
     }
 
+    @GetMapping("/jwt")
+    public String jwt() {
+        return "simple-rest app jwt";
+    }
+
+
 
 }

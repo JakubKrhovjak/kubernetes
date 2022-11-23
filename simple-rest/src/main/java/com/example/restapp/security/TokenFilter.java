@@ -2,7 +2,9 @@ package com.example.restapp.security;
 
 import com.example.restapp.security.auth.ApiTokenAuthentication;
 import com.example.restapp.security.auth.BearerAuthentication;
+import com.example.restapp.security.auth.JwtTokenAuthentication;
 
+import org.h2.security.auth.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION = "authorization";
     private static final String API_KEY = "api-key";
+
+    private static final String JWT_TOKEN = "jwt-token";
     private final AuthenticationManager authenticationManager;
 
     @Override
@@ -46,13 +50,21 @@ public class TokenFilter extends OncePerRequestFilter {
 
     }
 
-    private Authentication authorization(HttpServletRequest request) {
+    private Authentication authorization(HttpServletRequest request) throws AuthenticationException {
         var headers = Collections.list(request.getHeaderNames());
         String header = request.getHeader(AUTHORIZATION);
         if (headers.contains(AUTHORIZATION)) {
             return new BearerAuthentication(false, request.getHeader(AUTHORIZATION));
         }
 
-        return new ApiTokenAuthentication(false, request.getHeader(API_KEY));
+        if(headers.contains("api-token"))  {
+            return new ApiTokenAuthentication(false, request.getHeader(API_KEY));
+        }
+
+        if(headers.contains("jwt-token")) {
+            return new JwtTokenAuthentication(false, request.getHeader(JWT_TOKEN));
+        }
+
+        throw new AuthenticationException();
     }
 }
