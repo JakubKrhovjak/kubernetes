@@ -8,6 +8,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
@@ -55,6 +57,16 @@ public class SecurityConfig  {
         return filter;
     }
 
+    public AuthenticationWebFilter jwtToken() {
+        var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
+        filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
+                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(API_KEY))
+                .filter(value -> apiToken.equals(value))
+                .map(value -> new TokenAuthentication(true, value)));
+
+        return filter;
+    }
+
     private static String parseToken(String bearerToken) {
         return bearerToken.replace("Bearer", "").trim();
     }
@@ -85,6 +97,11 @@ public class SecurityConfig  {
                 .build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 //    @Bean
 //    public ReactiveUserDetailsService userDetailsService() {
 //        var user = User.withUsername("jakub")
@@ -96,8 +113,5 @@ public class SecurityConfig  {
 //
 //    }
 //
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+
 }

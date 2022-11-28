@@ -1,5 +1,7 @@
-import {useEffect} from "react";
+import {useEffect, createContext, useContext} from "react";
 import { axios } from "./config/axiosCofnig";
+
+const SecurityContext =  createContext();
 
 function App() {
 
@@ -7,7 +9,7 @@ function App() {
         axios.get("simple-rest/test")
             .then(res => console.log(res));
 
-    })
+    }, [])
 
     return (
         <div className="App">
