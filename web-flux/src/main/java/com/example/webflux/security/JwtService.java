@@ -68,11 +68,8 @@ public class JwtService {
     public Mono<Boolean> validateToken(String token) {
         final var username = extractUsername(token);
         return userRepository.findByUsername(username)
-                .map(user -> {
-                   return username.equals(user.getUsername()) && !isTokenExpired(token);
-                })
-                .defaultIfEmpty(false);
-
+                .map(user -> username.equals(user.getUsername()) && !isTokenExpired(token))
+                .onErrorReturn(false);
 
     }
 

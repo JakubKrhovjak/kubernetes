@@ -58,10 +58,10 @@ public class SecurityConfig  {
         filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
                 .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(JWT_TOKEN))
                 .flatMap(value -> {
-                    return jwtService.validateToken(value)
-                            .map(v ->  new TokenAuthentication(v, value));
+                    return jwtService.validateToken(value).map(v ->  {
+                        return new TokenAuthentication(v, value);
+                    });
                 }));
-
 
         return filter;
     }
