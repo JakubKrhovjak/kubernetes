@@ -1,5 +1,6 @@
 package com.example.webflux.login;
 
+import com.example.webflux.user.User;
 import com.example.webflux.user.UserService;
 
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 /**
  * Created by Jakub Krhovják on 11/22/22.
  */
-@RequestMapping("/simple-rest/auth")
+@RequestMapping("/webflux/auth")
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
@@ -29,9 +30,8 @@ public class LoginController {
     }
 
     @PostMapping("create")
-    public Mono<Void> create(@RequestBody AuthCredentialRequest req) {
-        userService.crateUser(req);
-        return Mono.empty();
+    public Mono<User> create(@RequestBody AuthCredentialRequest req) {
+        return userService.crateUser(req);
     }
 
 }

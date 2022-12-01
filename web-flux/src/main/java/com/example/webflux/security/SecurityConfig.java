@@ -14,23 +14,29 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 /**
  * Created by Jakub Krhovják on 11/5/22.
  */
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig  {
 
     private static final String AUTHORIZATION = "Authorization";
 
     private static final String API_KEY = "api-key";
 
+    private static final String JWT_TOKEN = "jwt-token";
+
     @Value("${bearer-token}")
     private String bearerToken;
 
     @Value("${api-token}")
     private String apiToken;
+
+    private final JwtService jwtService;
 
 
     public ReactiveAuthenticationManager emptyReactiveAuthenticationManager() {
@@ -47,17 +53,20 @@ public class SecurityConfig  {
         return filter;
     }
 
-    public AuthenticationWebFilter apiToken() {
+    public AuthenticationWebFilter apiTokenFilter() {
         var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
         filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
-                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(API_KEY))
-                .filter(value -> apiToken.equals(value))
-                .map(value -> new TokenAuthentication(true, value)));
+                .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(JWT_TOKEN))
+                .flatMap(value -> {
+                    return jwtService.validateToken(value)
+                            .map(v ->  new TokenAuthentication(v, value));
+                }));
+
 
         return filter;
     }
 
-    public AuthenticationWebFilter jwtToken() {
+    public AuthenticationWebFilter jwtTokenFilter() {
         var filter = new AuthenticationWebFilter(emptyReactiveAuthenticationManager());
         filter.setServerAuthenticationConverter(exchange -> Mono.justOrEmpty(exchange)
                 .mapNotNull(ex -> ex.getRequest().getHeaders().getFirst(API_KEY))
@@ -77,7 +86,8 @@ public class SecurityConfig  {
         return http
                 .securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webflux/token/**"))
                 .addFilterAt(bearerFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-                .addFilterAt(apiToken(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(apiTokenFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(jwtTokenFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange().pathMatchers("/webflux/token/**").authenticated()
                 .and()
                 .build();

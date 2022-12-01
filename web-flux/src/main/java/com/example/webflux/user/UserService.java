@@ -32,9 +32,10 @@ public class UserService {
 //                .onErrorMap(() -> new BadCredentialsException(""));
     }
 
-    public void crateUser(AuthCredentialRequest req) {
-        var newUser = new User().setUsername(req.getUsername()).setId(1)
-                .setPassword(passwordEncoder.encode(req.getPassword()));
-        userRepository.save(newUser);
+    public Mono<User> crateUser(AuthCredentialRequest req) {
+        return Mono.justOrEmpty(new User().setUsername(req.getUsername()).setId(1)
+                .setPassword(passwordEncoder.encode(req.getPassword())))
+                .flatMap(userRepository::save);
+
     }
 }

@@ -15,6 +15,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 /**
  * Created by Jakub Krhovják on 11/21/22.
@@ -64,12 +65,15 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, jwtSecret).compact();
     }
 
-    public boolean validateToken(String token) {
+    public Mono<Boolean> validateToken(String token) {
         final var username = extractUsername(token);
         return userRepository.findByUsername(username)
-                .map(user -> username.equals(user.getUsername()) && !isTokenExpired(token))
-                .defaultIfEmpty(false)
-                .block();
+                .map(user -> {
+                   return username.equals(user.getUsername()) && !isTokenExpired(token);
+                })
+                .defaultIfEmpty(false);
+
+
     }
 
 }

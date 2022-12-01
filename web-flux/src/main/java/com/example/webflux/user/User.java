@@ -1,6 +1,8 @@
 package com.example.webflux.user;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 
@@ -15,9 +17,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 
 @Table(schema="public", name= "user")
-public class User {
+public class User {//implements Persistable<User> {
 
-    @Id
+//    @Id
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
 //    @SequenceGenerator(name="user_id_seq",sequenceName="user_id_seq", allocationSize=1)
     public Integer id;
@@ -25,4 +27,10 @@ public class User {
     public String username;
 
     private String password;
+
+//    @Override
+//    @Transient
+//    public boolean isNew() {
+//        return id == null;
+//    }
 }
