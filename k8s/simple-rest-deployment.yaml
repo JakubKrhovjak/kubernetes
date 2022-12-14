@@ -13,7 +13,7 @@ spec:
         run: simple-rest
     spec:
       containers:
-        - image: japca/simple-rest:1.2.1
+        - image: japca/simple-rest:latest
           imagePullPolicy: IfNotPresent
           name: simple-rest
           ports:
