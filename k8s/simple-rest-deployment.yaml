@@ -31,6 +31,9 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: 8080
+          env:
+            - name: SPRING_PROFILE_ACTIVE
+              value: prod
           envFrom:
             - configMapRef:
                 name: simple-rest-config
@@ -59,9 +62,9 @@ kind: Service
 metadata:
   name: simple-rest
   namespace: default
-  annotations:
-#     cloud.google.com/neg: '{"exposed_ports": {"8080":{}}}'
-    cloud.google.com/l4-rbs: "enabled"
+#  annotations:
+##     cloud.google.com/neg: '{"exposed_ports": {"8080":{}}}'
+#    cloud.google.com/l4-rbs: "enabled"
 spec:
   ports:
     - port: 8080

@@ -1,0 +1,4 @@
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:postgresql://db:5432/data_db?user=jakub&password=pass

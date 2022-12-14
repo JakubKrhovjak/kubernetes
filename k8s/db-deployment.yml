@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      run: db
+  template:
+    metadata:
+      labels:
+        run: db
+    spec:
+      containers:
+        - image: bitnami/postgresql:latest
+          imagePullPolicy: IfNotPresent
+          name: db
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRESQL_USERNAME
+              value: "jakub"
+            - name: POSTGRESQL_DATABASE
+              value: "data_db"
+            - name: POSTGRESQL_PASSWORD
+              value: "pass"
+          livenessProbe:
+            initialDelaySeconds: 45
+            timeoutSeconds: 2
+            exec:
+              command: [ "psql", "-w", "-U", "jakub", "-d", "data_db", "-c", "SELECT 1" ]
+          readinessProbe:
+            initialDelaySeconds: 12
+            timeoutSeconds: 5
+            exec:
+              command: [ "psql", "-w", "-U", "jakub", "-d", "data_db", "-c", "SELECT 1" ]
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: default
+spec:
+  ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    run: db-rest
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
