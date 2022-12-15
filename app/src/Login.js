@@ -3,20 +3,20 @@ import {axios} from "./config/axiosCofnig";
 
 // const SecurityContext =  createContext();
 
-function App() {
+function Login() {
 
     useEffect(() => {
-        axios.get("simple-rest/test")
+        axios.get("/simple-rest/auth/login")
             .then(res => console.log(res));
 
     }, [])
 
     return (
         <Fragment>
-            <Login></Login>
+            H
         </Fragment>
     );
 
 }
 
-export default App;
+export default Login;
