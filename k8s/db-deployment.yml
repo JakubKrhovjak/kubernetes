@@ -53,4 +53,3 @@ spec:
   selector:
     run: db-rest
   type: NodePort
-  externalTrafficPolicy: Cluster

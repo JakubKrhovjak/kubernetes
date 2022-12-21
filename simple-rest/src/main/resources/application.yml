@@ -5,12 +5,13 @@ spring:
       password: 123
 
   jpa:
+
     open-in-view: false
     hibernate:
       ddl-auto: validate
   datasource:
     hikari:
-      jdbc-url: jdbc:postgresql://localhost:5432/data_db?user=jakub&password=pass
+      jdbc-url: jdbc:postgresql://localhost:33527/data_db?user=jakub&password=pass
     driver-class-name: org.postgresql.Driver
   lifecycle:
     timeout-per-shutdown-phase: 1m

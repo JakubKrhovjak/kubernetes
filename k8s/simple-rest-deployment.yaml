@@ -13,7 +13,7 @@ spec:
         run: simple-rest
     spec:
       containers:
-        - image: japca/simple-rest:latest
+        - image: japca/simple-rest:1.27
           imagePullPolicy: IfNotPresent
           name: simple-rest
           ports:
@@ -32,26 +32,26 @@ spec:
               path: /actuator/health/readiness
               port: 8080
           env:
-            - name: SPRING_PROFILE_ACTIVE
+            - name: SPRING_PROFILES_ACTIVE
               value: prod
-          envFrom:
-            - configMapRef:
-                name: simple-rest-config
+#          envFrom:
+#            - configMapRef:
+#                name: simple-rest-config
 #          env:
 #            - name: SPRING_APPLICATION_JSON
 #              valueFrom:
 #                configMapKeyRef:
 #                  name: simple-rest-map
 #                  key: application.json
-          volumeMounts:
-            - name: application-yml
-              mountPath: "/config"
-#              subPath: application.yml
-              readOnly: true
-      volumes:
-        - name: application-yml
-          configMap:
-            name: simple-rest-config
+#          volumeMounts:
+#            - name: application-yml
+#              mountPath: "/config"
+##              subPath: application.yml
+#              readOnly: true
+#      volumes:
+#        - name: application-yml
+#          configMap:
+#            name: simple-rest-config
 
 
 
@@ -72,5 +72,4 @@ spec:
       targetPort: 8080
   selector:
     run: simple-rest
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  type: NodePort
