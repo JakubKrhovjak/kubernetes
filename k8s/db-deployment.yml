@@ -52,5 +52,5 @@ spec:
       targetPort: 5432
   selector:
     run: db-rest
-  type: ClusterIP
+  type: NodePort
   externalTrafficPolicy: Cluster
