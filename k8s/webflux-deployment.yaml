@@ -13,24 +13,24 @@ spec:
         run: webflux
     spec:
       containers:
-        - image: japca/webflux:1.1.0
+        - image: japca/webflux:1.11
           imagePullPolicy: IfNotPresent
           name: webflux
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
               protocol: TCP
           livenessProbe:
             initialDelaySeconds: 5
             periodSeconds: 5
             httpGet:
               path: /actuator/health/liveness
-              port: 8080
+              port: 8081
           readinessProbe:
             initialDelaySeconds: 5
             periodSeconds: 5
             httpGet:
               path: /actuator/health/readiness
-              port: 8080
+              port: 8081
 ---
 
 apiVersion: v1
@@ -39,12 +39,14 @@ metadata:
   name: webflux
   namespace: default
   annotations:
-    cloud.google.com/neg: '{"exposed_ports": {"8080":{}}}'
+    service.beta.kubernetes.io/vultr-loadbalancer-protocol: "http"
+
 spec:
   ports:
-    - port: 8080
-      protocol: TCP
-      targetPort: 8080
+    - port: 80
+      targetPort: 8081
   selector:
     run: webflux
-  type: LoadBalancer
+  type: NodePort
+  externalIPs:
+    - 70.34.245.253

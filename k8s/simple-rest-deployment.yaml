@@ -62,14 +62,16 @@ kind: Service
 metadata:
   name: simple-rest
   namespace: default
+  annotations:
+    service.beta.kubernetes.io/vultr-loadbalancer-protocol: "http"
 #  annotations:
 ##     cloud.google.com/neg: '{"exposed_ports": {"8080":{}}}'
 #    cloud.google.com/l4-rbs: "enabled"
 spec:
   ports:
-    - port: 8080
-      protocol: TCP
+    - port: 80
+#      protocol: TCP
       targetPort: 8080
   selector:
     run: simple-rest
-  type: NodePort
+  type: LoadBalancer
